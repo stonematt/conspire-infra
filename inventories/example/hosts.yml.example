@@ -1,0 +1,10 @@
+---
+# Example inventory - copy to inventories/production/hosts.yml
+all:
+  hosts:
+    web:
+      ansible_host: your-server.example.com
+      ansible_user: root
+      # Or with SSH key:
+      # ansible_user: mstone
+      # ansible_ssh_private_key_file: ~/.ssh/id_ed25519

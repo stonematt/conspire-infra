@@ -1,0 +1,19 @@
+---
+# Site configuration - copy to group_vars/all.yml
+# Domain (single DNS entry for both services)
+domain: s.itri.me
+
+# Let's Encrypt email
+certbot_email: admin@example.com
+
+# Ports
+conspire_port: "8443"    # Conspire binary (direct TLS)
+landing_port: "443"      # Caddy static site
+
+# Paths
+conspire_config_dir: /opt/conspire
+landing_web_root: /var/www/{{ domain }}
+
+# Landing page branding
+site_title: "Neighborhood Connect"
+site_tagline: "Secure, anonymous community chat"

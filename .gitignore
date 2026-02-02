@@ -1,0 +1,15 @@
+# Local config (contains secrets)
+group_vars/all.yml
+inventories/production/
+
+# Ansible
+*.retry
+
+# OS
+.DS_Store
+
+# Editor
+*.swp
+*~
+.idea/
+.vscode/

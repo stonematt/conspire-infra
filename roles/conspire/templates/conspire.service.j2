@@ -1,0 +1,28 @@
+[Unit]
+Description=Conspire - Ephemeral Anonymous Chat
+Documentation=https://dyne.org/conspire/
+After=network.target
+
+[Service]
+Type=simple
+User=conspire
+Group=conspire
+WorkingDirectory={{ conspire_config_dir }}
+ExecStart={{ conspire_config_dir }}/conspire
+Environment=EXTERNAL_ADDRESS={{ conspire_domain }}
+Environment=EXTERNAL_PORT={{ conspire_port }}
+Environment=TLS_FILE_PRIVATE_KEY=cert/privkey.pem
+Environment=TLS_FILE_CERT_CHAIN=cert/fullchain.pem
+Environment=URL_STATS_PATH=admin/stats.json
+Restart=on-failure
+RestartSec=5
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths={{ conspire_config_dir }}
+
+[Install]
+WantedBy=multi-user.target

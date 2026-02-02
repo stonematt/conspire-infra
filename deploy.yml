@@ -1,0 +1,10 @@
+---
+# Landing page content deploy only (fast)
+- name: Deploy Landing Page
+  hosts: all
+  become: true
+  roles:
+    - landing
+  tags:
+    - deploy
+    - landing

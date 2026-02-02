@@ -1,0 +1,8 @@
+---
+# Full deployment: Conspire + Landing Page
+- name: Deploy Conspire Infrastructure
+  hosts: all
+  become: true
+  roles:
+    - conspire
+    - landing

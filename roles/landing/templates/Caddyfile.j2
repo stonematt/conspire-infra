@@ -1,0 +1,10 @@
+{{ landing_domain }} {
+    tls {{ landing_admin_email }}
+
+    log {
+        output file /var/log/caddy/{{ landing_domain }}.log
+    }
+
+    root * {{ landing_web_root }}
+    file_server
+}

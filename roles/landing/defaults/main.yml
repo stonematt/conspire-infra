@@ -1,0 +1,6 @@
+---
+# Landing role defaults
+landing_domain: "{{ domain }}"
+landing_port: "443"
+landing_web_root: "/var/www/{{ domain }}"
+landing_admin_email: "{{ certbot_email }}"

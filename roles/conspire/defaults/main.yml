@@ -1,0 +1,5 @@
+---
+# Conspire role defaults
+conspire_domain: "{{ domain }}"
+conspire_port: "8443"
+conspire_config_dir: "/opt/conspire"
