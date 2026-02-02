@@ -1,0 +1,17 @@
+{{ landing_domain }} {
+    tls {{ landing_admin_email }}
+
+    log {
+        output file /var/log/caddy/{{ landing_domain }}.log
+    }
+
+    # Serve empty directory (no site content deployed yet)
+    root * {{ landing_web_root }}
+    file_server
+
+    # Basic response for empty directory
+    respond 200 {
+        body "<!DOCTYPE html><html><head><title>Infrastructure Ready</title></head><body><h1>Infrastructure Deployed Successfully</h1><p>Web server is ready for content deployment.</p><p><a href=\"https://{{ landing_domain }}:{{ conspire_port }}\">Access Conspire Chat</a></p></body></html>"
+        close
+    }
+}

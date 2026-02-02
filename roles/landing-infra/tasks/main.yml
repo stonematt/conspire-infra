@@ -1,0 +1,82 @@
+---
+# Landing Infrastructure Role - Caddy setup without site content
+# Sets up web server, SSL, and firewall ready for content deployment
+
+- name: Install Caddy dependencies
+  apt:
+    name:
+      - debian-keyring
+      - debian-archive-keyring
+      - apt-transport-https
+      - curl
+    state: present
+    update_cache: true
+
+- name: Add Caddy GPG key
+  ansible.builtin.get_url:
+    url: https://dl.cloudsmith.io/public/caddy/stable/gpg.key
+    dest: /usr/share/keyrings/caddy-stable-archive-keyring.asc
+    mode: '0644'
+
+- name: Add Caddy repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/caddy-stable-archive-keyring.asc] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main"
+    state: present
+    filename: caddy-stable
+
+- name: Install Caddy
+  apt:
+    name: caddy
+    state: present
+    update_cache: true
+
+- name: Create web root directory
+  file:
+    path: "{{ landing_web_root }}"
+    state: directory
+    owner: caddy
+    group: caddy
+    mode: '0755'
+
+- name: Deploy Caddyfile (infrastructure setup)
+  template:
+    src: Caddyfile.j2
+    dest: /etc/caddy/Caddyfile
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Reload Caddy
+
+- name: Create Caddy log directory
+  file:
+    path: /var/log/caddy
+    state: directory
+    owner: caddy
+    group: caddy
+    mode: '0755'
+
+- name: Stop and disable nginx (conflicts with Caddy)
+  systemd:
+    name: nginx
+    state: stopped
+    enabled: false
+  ignore_errors: yes
+
+- name: Enable and start Caddy
+  systemd:
+    name: caddy
+    enabled: true
+    state: started
+
+# Firewall - ports 443 and 80 for Caddy
+- name: Allow HTTP through firewall
+  ufw:
+    rule: allow
+    port: '80'
+    proto: tcp
+
+- name: Allow HTTPS through firewall
+  ufw:
+    rule: allow
+    port: '443'
+    proto: tcp

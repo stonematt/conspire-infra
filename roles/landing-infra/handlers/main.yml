@@ -1,0 +1,6 @@
+---
+# Caddyfile handlers for landing infrastructure
+- name: Reload Caddy
+  systemd:
+    name: caddy
+    state: reloaded
