@@ -1,0 +1,10 @@
+---
+# Infrastructure deployment: Conspire + Web Server setup (no site content)
+# Sets up complete infrastructure including Conspire binary, SSL certs, 
+# and Caddy web server ready for content deployment
+- name: Deploy Conspire Infrastructure
+  hosts: all
+  become: true
+  roles:
+    - conspire
+    - landing-infra
