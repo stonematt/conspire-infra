@@ -3,6 +3,9 @@
 ## Commands
 
 ```bash
+# Infrastructure only (conspire + web server, no site content)
+ansible-playbook -i inventories/production/hosts.yml infra.yml
+
 # Full deploy (conspire + landing)
 ansible-playbook -i inventories/production/hosts.yml site.yml
 
@@ -10,7 +13,7 @@ ansible-playbook -i inventories/production/hosts.yml site.yml
 ansible-playbook -i inventories/production/hosts.yml deploy.yml
 
 # Dry run
-ansible-playbook -i inventories/production/hosts.yml site.yml --check --diff
+ansible-playbook -i inventories/production/hosts.yml infra.yml --check --diff
 
 # Syntax check
 ansible-playbook --syntax-check site.yml
