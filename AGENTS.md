@@ -58,19 +58,17 @@ conspire_port: "8443"
 
 ## Content Management
 
-Static site content is managed as a git submodule in `vendor/conspire-site/`:
+Static site content is automatically pulled from the `live` branch during deployment:
 
 ```bash
-# Update to latest content from live branch
-cd vendor/conspire-site
-git pull origin live
-cd ../..
-git add vendor/conspire-site
-git commit -m "Update site content to latest"
-
-# Deploy content updates
+# Deploy latest content (auto-updates from live branch)
 ansible-playbook -i inventories/production/hosts.yml deploy.yml
+
+# Full deployment (includes latest content)
+ansible-playbook -i inventories/production/hosts.yml site.yml
 ```
+
+**Note:** The landing role automatically updates `vendor/conspire-site` to the latest `live` branch before each deployment, ensuring content is always current.
 
 ## Testing
 
