@@ -39,6 +39,15 @@
     group: caddy
     mode: '0755'
 
+- name: Update vendor submodule to latest live branch
+  ansible.builtin.git:
+    repo: git@github.com:stonematt/conspire-site.git
+    dest: vendor/conspire-site
+    version: live
+    force: true
+  delegate_to: localhost
+  run_once: true
+
 - name: Copy site content from vendor submodule
   copy:
     src: vendor/conspire-site/
