@@ -1,0 +1,3 @@
+[submodule "vendor/conspire-site"]
+	path = vendor/conspire-site
+	url = git@github.com:stonematt/conspire-site.git

@@ -1,11 +1,7 @@
 ---
 # Landing Page Role - Static site via Caddy
 
-- name: Install git
-  apt:
-    name: git
-    state: present
-    update_cache: true
+
 
 - name: Install Caddy dependencies
   apt:
@@ -43,12 +39,13 @@
     group: caddy
     mode: '0755'
 
-- name: Update site_content from git repository
-  git:
-    repo: "{{ site_content_repo | default('https://github.com/dyne/conspire-site.git') }}"
+- name: Copy site content from vendor submodule
+  copy:
+    src: vendor/conspire-site/
     dest: "{{ landing_web_root }}/"
-    version: "{{ site_content_version | default('master') }}"
-    force: true
+    owner: caddy
+    group: caddy
+    mode: preserve
   notify: Reload Caddy
 
 - name: Deploy Caddyfile

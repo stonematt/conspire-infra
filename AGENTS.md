@@ -25,6 +25,8 @@ ansible-playbook --syntax-check site.yml
 conspire-infra/
 ├── site.yml           # Full deploy playbook
 ├── deploy.yml         # Landing content only
+├── vendor/
+│   └── conspire-site/ # Git submodule for static content
 ├── roles/
 │   ├── conspire/      # Binary, certs, systemd (port 8443)
 │   └── landing/       # Caddy, static files (port 443)
@@ -51,21 +53,28 @@ conspire_port: "8443"
 
 ### landing
 - Installs Caddy
-- Deploys static files from site_content/
+- Deploys static files from vendor/conspire-site/
 - Configures TLS on port 443
 
-## Submodule
+## Content Management
 
-Landing page content lives in `site_content/` submodule:
+Static site content is managed as a git submodule in `vendor/conspire-site/`:
 
 ```bash
-git submodule add ../conspire-site site_content
-git submodule update --init
+# Update to latest content from live branch
+cd vendor/conspire-site
+git pull origin live
+cd ../..
+git add vendor/conspire-site
+git commit -m "Update site content to latest"
+
+# Deploy content updates
+ansible-playbook -i inventories/production/hosts.yml deploy.yml
 ```
 
 ## Testing
 
-1. Preview landing page locally: `open site_content/index.html`
+1. Preview landing page locally: `open vendor/conspire-site/index.html`
 2. Verify JS generates correct URLs with `:8443`
 3. Dry run: `--check --diff`
 4. Deploy to staging first if available
