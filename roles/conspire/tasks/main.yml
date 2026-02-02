@@ -38,17 +38,20 @@
     url: https://api.github.com/repos/dyne/conspire/releases/latest
     return_content: yes
   register: conspire_release
+  when: ansible_check_mode != true
 
 - name: Extract release download URL and version
   set_fact:
     conspire_download_url: "{{ conspire_release.json.assets | selectattr('name', 'equalto', 'conspire-x86_64') | map(attribute='browser_download_url') | first }}"
     conspire_version: "{{ conspire_release.json.tag_name }}"
+  when: ansible_check_mode != true
 
 - name: Create temporary directory for downloads
   file:
     path: "{{ conspire_config_dir }}/tmp"
     state: directory
     mode: '0755'
+  when: ansible_check_mode != true
 
 - name: Download Conspire binary
   get_url:
@@ -56,6 +59,7 @@
     dest: "{{ conspire_config_dir }}/tmp/conspire-x86_64"
     mode: '0644'
   register: conspire_downloaded
+  when: ansible_check_mode != true
 
 - name: Download source tarball for frontend assets
   unarchive:
@@ -63,6 +67,7 @@
     dest: "{{ conspire_config_dir }}/tmp/"
     remote_src: yes
     creates: "{{ conspire_config_dir }}/tmp/conspire-{{ conspire_version | regex_replace('^v', '') }}/front"
+  when: ansible_check_mode != true
 
 - name: Move binary to final location
   copy:
@@ -72,21 +77,23 @@
     owner: root
     group: root
     mode: '0755'
-  when: conspire_downloaded.changed
+  when: conspire_downloaded.changed and ansible_check_mode != true
 
 - name: Copy frontend directory
   copy:
     src: "{{ conspire_config_dir }}/tmp/conspire-{{ conspire_version | regex_replace('^v', '') }}/front/"
     dest: "{{ conspire_config_dir }}/front/"
     remote_src: yes
-    owner: root
-    group: root
+    owner: conspire
+    group: conspire
     mode: '0755'
+  when: ansible_check_mode != true
 
 - name: Cleanup temporary directory
   file:
     path: "{{ conspire_config_dir }}/tmp"
     state: absent
+  when: ansible_check_mode != true
 
 # TLS certificates via Let's Encrypt
 - name: Stop conspire for certbot
@@ -125,6 +132,7 @@
     group: conspire
     mode: '0644'
   notify: Restart Conspire
+  when: ansible_check_mode != true
 
 - name: Copy private key
   copy:
@@ -135,6 +143,7 @@
     group: conspire
     mode: '0600'
   notify: Restart Conspire
+  when: ansible_check_mode != true
 
 # Firewall - port 8443 for Conspire
 - name: Allow Conspire port through UFW
@@ -154,6 +163,7 @@
   notify:
     - Reload systemd
     - Restart Conspire
+  when: ansible_check_mode != true
 
 - name: Enable and start Conspire service
   systemd:
@@ -161,6 +171,7 @@
     state: started
     enabled: yes
     daemon_reload: yes
+  when: ansible_check_mode != true
 
 # Certificate renewal hook
 - name: Create certbot renewal hooks directory
