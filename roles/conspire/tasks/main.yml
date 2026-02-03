@@ -3,26 +3,35 @@
 # https://dyne.org/conspire/
 # Native binary deployment on port 8443
 
+- name: Add universe repository
+  ansible.builtin.apt_repository:
+    repo: "deb http://archive.ubuntu.com/ubuntu/ jammy universe"
+    state: present
+
 - name: Install dependencies
-  apt:
+  ansible.builtin.apt:
     name:
       - ca-certificates
       - curl
-      - jq
-      - certbot
     state: present
-    update_cache: yes
+    update_cache: true
+
+- name: Install certbot via snap
+  community.general.snap:
+    name:
+      - certbot
+    classic: true
 
 - name: Create conspire system user
-  user:
+  ansible.builtin.user:
     name: conspire
-    system: yes
+    system: true
     shell: /usr/sbin/nologin
     home: "{{ conspire_config_dir }}"
-    create_home: no
+    create_home: false
 
 - name: Create Conspire directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     owner: root
@@ -34,24 +43,24 @@
 
 # Download latest release
 - name: Get latest Conspire release info
-  uri:
+  ansible.builtin.uri:
     url: https://api.github.com/repos/dyne/conspire/releases/latest
     return_content: yes
   register: conspire_release
-  when: ansible_check_mode != true
+  when: not ansible_check_mode
 
 - name: Extract release download URL and version
-  set_fact:
+  ansible.builtin.set_fact:
     conspire_download_url: "{{ conspire_release.json.assets | selectattr('name', 'equalto', 'conspire-x86_64') | map(attribute='browser_download_url') | first }}"
     conspire_version: "{{ conspire_release.json.tag_name }}"
-  when: ansible_check_mode != true
+  when: not ansible_check_mode
 
 - name: Create temporary directory for downloads
-  file:
+  ansible.builtin.file:
     path: "{{ conspire_config_dir }}/tmp"
     state: directory
     mode: '0755'
-  when: ansible_check_mode != true
+  when: not ansible_check_mode
 
 - name: Download Conspire binary
   get_url:
@@ -59,7 +68,7 @@
     dest: "{{ conspire_config_dir }}/tmp/conspire-x86_64"
     mode: '0644'
   register: conspire_downloaded
-  when: ansible_check_mode != true
+  when: not ansible_check_mode
 
 - name: Download source tarball for frontend assets
   unarchive:
@@ -67,7 +76,7 @@
     dest: "{{ conspire_config_dir }}/tmp/"
     remote_src: yes
     creates: "{{ conspire_config_dir }}/tmp/conspire-{{ conspire_version | regex_replace('^v', '') }}/front"
-  when: ansible_check_mode != true
+  when: not ansible_check_mode
 
 - name: Move binary to final location
   copy:
@@ -87,20 +96,20 @@
     owner: conspire
     group: conspire
     mode: '0755'
-  when: ansible_check_mode != true
+  when: not ansible_check_mode
 
 - name: Cleanup temporary directory
   file:
     path: "{{ conspire_config_dir }}/tmp"
     state: absent
-  when: ansible_check_mode != true
+  when: not ansible_check_mode
 
 # TLS certificates via Let's Encrypt
 - name: Stop conspire for certbot
   systemd:
     name: conspire
     state: stopped
-  ignore_errors: yes
+  failed_when: false
 
 - name: Open port 80 temporarily for certbot
   ufw:
@@ -132,7 +141,7 @@
     group: conspire
     mode: '0644'
   notify: Restart Conspire
-  when: ansible_check_mode != true
+  when: not ansible_check_mode
 
 - name: Copy private key
   copy:
@@ -143,7 +152,7 @@
     group: conspire
     mode: '0600'
   notify: Restart Conspire
-  when: ansible_check_mode != true
+  when: not ansible_check_mode
 
 # Firewall - port 8443 for Conspire
 - name: Allow Conspire port through UFW
@@ -163,15 +172,15 @@
   notify:
     - Reload systemd
     - Restart Conspire
-  when: ansible_check_mode != true
+  when: not ansible_check_mode
 
 - name: Enable and start Conspire service
   systemd:
     name: conspire
     state: started
-    enabled: yes
-    daemon_reload: yes
-  when: ansible_check_mode != true
+    enabled: true
+    daemon_reload: true
+  when: not ansible_check_mode
 
 # Certificate renewal hook
 - name: Create certbot renewal hooks directory
@@ -199,4 +208,4 @@
   systemd:
     name: certbot.timer
     state: started
-    enabled: yes
+    enabled: true

@@ -1,0 +1,11 @@
+# Test Configuration for Linode Instance
+
+# Inventory file for testing
+# Save as: inventories/test/hosts.yml
+
+all:
+  hosts:
+    test-host:
+      ansible_host: YOUR_LINODE_IP
+      ansible_user: root
+      ansible_ssh_common_args: '-o StrictHostKeyChecking=no'

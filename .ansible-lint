@@ -1,0 +1,14 @@
+---
+# ansible-lint configuration for conspire-infra project
+# Production-ready configuration for community release
+
+# Skip rules that are acceptable for this project
+skip_list:
+  - 'yaml[line-length]'      # Long lines needed for complex expressions
+  - 'yaml[empty-lines]'      # Strategic empty lines for readability  
+  - 'literal-compare'        # ansible_check_mode comparisons are intentional
+  - 'yaml[truthy]'          # Boolean yes/no acceptable in this context
+  - 'ignore-errors'           # Service management requires graceful failure
+
+# Use production profile for community release
+profile: 'production'

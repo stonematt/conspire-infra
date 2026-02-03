@@ -1,0 +1,20 @@
+---
+# Test configuration
+
+# Use a test domain (you'll need to point this to your Linode)
+domain: test.goneelsewhere.org
+
+# Use a different email for testing
+certbot_email: test@goneelsewhere.org
+
+# Standard ports (these work fine)
+conspire_port: "8443"
+landing_port: "443"
+
+# Standard paths
+conspire_config_dir: /opt/conspire
+landing_web_root: /var/www/test.goneelsewhere.org
+
+# Test branding
+site_title: "Conspire Test Instance"
+site_tagline: "Testing secure anonymous chat"
