@@ -31,23 +31,25 @@
     owner: caddy
     group: caddy
     mode: '0755'
-- name: Update vendor submodule to latest live branch
+- name: Update vendor submodule to configured branch
   ansible.builtin.git:
-    repo: git@github.com:stonematt/conspire-site.git
-    dest: vendor/conspire-site
-    version: live
+    repo: "{{ vendor.site_content.repo }}"
+    dest: "{{ vendor.site_content.local_path }}"
+    version: "{{ vendor.site_content.branch }}"
     force: true
   delegate_to: localhost
   run_once: true
   become: false
+  when: vendor.site_content.enabled
 - name: Copy site content from vendor submodule
   copy:
-    src: vendor/conspire-site/
-    dest: "{{ landing_web_root }}/"
-    owner: caddy
-    group: caddy
+    src: "{{ vendor.site_content.local_path }}/"
+    dest: "{{ vendor.site_content.destination }}"
+    owner: "{{ vendor.site_content.owner }}"
+    group: "{{ vendor.site_content.group }}"
     mode: preserve
   notify: Reload Caddy
+  when: vendor.site_content.enabled
 - name: Deploy Caddyfile
   template:
     src: Caddyfile.j2

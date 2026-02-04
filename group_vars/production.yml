@@ -16,3 +16,15 @@ landing_web_root: /var/www/s.itri.me
 # Production branding
 site_title: "Conspire"
 site_tagline: "Ephemeral anonymous chat"
+
+# Production vendor configuration
+vendor:
+  site_content:
+    enabled: true
+    name: "conspire-site"
+    repo: "git@github.com:stonematt/conspire-site.git"
+    branch: "live"                    # Production uses live branch
+    local_path: "vendor/conspire-site"
+    destination: "{{ landing_web_root }}/"
+    owner: "caddy"
+    group: "caddy"

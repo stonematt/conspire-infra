@@ -18,3 +18,15 @@ landing_web_root: /var/www/test.conspire-demo.com
 # Test branding
 site_title: "Conspire Test Instance"
 site_tagline: "Testing secure anonymous chat"
+
+# Test vendor configuration (can use different branch)
+vendor:
+  site_content:
+    enabled: true
+    name: "conspire-site"
+    repo: "git@github.com:stonematt/conspire-site.git"
+    branch: "main"                    # Test environment can use main branch
+    local_path: "vendor/conspire-site"
+    destination: "{{ landing_web_root }}/"
+    owner: "caddy"
+    group: "caddy"

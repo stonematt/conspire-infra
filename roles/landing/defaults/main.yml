@@ -4,3 +4,15 @@ landing_domain: "{{ domain }}"
 landing_port: "443"
 landing_web_root: "/var/www/{{ domain }}"
 landing_admin_email: "{{ certbot_email }}"
+
+# Default vendor configuration (fallback if not defined elsewhere)
+vendor:
+  site_content:
+    enabled: true
+    name: "conspire-site"
+    repo: "git@github.com:stonematt/conspire-site.git"
+    branch: "live"
+    local_path: "vendor/conspire-site"
+    destination: "{{ landing_web_root }}/"
+    owner: "caddy"
+    group: "caddy"

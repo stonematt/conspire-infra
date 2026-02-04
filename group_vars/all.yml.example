@@ -17,3 +17,16 @@ landing_web_root: /var/www/{{ domain }}
 # Landing page branding
 site_title: "Neighborhood Connect"
 site_tagline: "Secure, anonymous community chat"
+
+# Vendor/Submodule configuration
+vendor:
+  # Landing page content submodule
+  site_content:
+    enabled: true
+    name: "conspire-site"
+    repo: "git@github.com:stonematt/conspire-site.git"
+    branch: "live"                    # Environment-specific
+    local_path: "vendor/conspire-site" # Git submodule path
+    destination: "{{ landing_web_root }}/"
+    owner: "caddy"
+    group: "caddy"
