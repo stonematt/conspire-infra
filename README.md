@@ -31,6 +31,23 @@ ansible-playbook -i inventories/production/hosts.yml deploy.yml
 | `conspire` | 8443 | Binary install, TLS certs, systemd |
 | `landing` | 443 | Caddy, static site |
 
+## Testing
+
+Automated testing is included in this repository:
+
+```bash
+# One-command workflow (recommended)
+./scripts/deploy-and-test.sh --test-level standard
+
+# Manual testing workflow
+./scripts/create-test-instance.sh
+ansible-playbook -i inventories/test/hosts.yml site.yml
+./scripts/test-deployment.sh standard
+./scripts/cleanup.sh all
+```
+
+Note: Currently configured for Linode instances as example cloud provider.
+
 ## Requirements
 
 - Ansible 2.10+
