@@ -41,6 +41,17 @@ conspire-infra/
 domain: s.itri.me
 certbot_email: admin@example.com
 conspire_port: "8443"
+
+# Vendor configuration
+vendor:
+  site_content:
+    enabled: true
+    repo: "git@github.com:stonematt/conspire-site.git"
+    branch: "live"
+    local_path: "vendor/conspire-site"
+    destination: "{{ landing_web_root }}/"
+    owner: "caddy"
+    group: "caddy"
 ```
 
 ## Roles
@@ -58,17 +69,23 @@ conspire_port: "8443"
 
 ## Content Management
 
-Static site content is automatically pulled from the `live` branch during deployment:
+Static site content is managed through vendor configuration and automatically pulled during deployment:
 
 ```bash
-# Deploy latest content (auto-updates from live branch)
+# Deploy latest content (auto-updates from configured branch)
 ansible-playbook -i inventories/production/hosts.yml deploy.yml
 
 # Full deployment (includes latest content)
 ansible-playbook -i inventories/production/hosts.yml site.yml
 ```
 
-**Note:** The landing role automatically updates `vendor/conspire-site` to the latest `live` branch before each deployment, ensuring content is always current.
+**Vendor Configuration:** Content is managed through the `vendor.site_content` variables:
+- `branch`: Git branch to deploy (default: "live")
+- `repo`: Repository URL
+- `enabled`: Enable/disable submodule updates
+- Configure per-environment in `group_vars/*.yml`
+
+**Note:** The landing role automatically updates the vendor submodule to the configured branch before each deployment, ensuring content is always current.
 
 ## Testing
 
