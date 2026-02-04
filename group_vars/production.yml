@@ -1,0 +1,18 @@
+---
+# Production configuration for s.itri.me
+
+# Domain configuration
+domain: s.itri.me
+certbot_email: ms@cultureshock.xyz
+
+# Standard ports
+conspire_port: "8443"
+landing_port: "443"
+
+# Standard paths (derived from domain)
+conspire_config_dir: /opt/conspire
+landing_web_root: /var/www/s.itri.me
+
+# Production branding
+site_title: "Conspire"
+site_tagline: "Ephemeral anonymous chat"
